@@ -107,7 +107,13 @@ streamlit run app.py
 
 ## Google Colab Workflow
 
-Use:
+For a self-contained Colab workflow with the full code inside the notebook, use:
+
+```text
+notebooks/BI_Dashboard_Full_Project_Colab.ipynb
+```
+
+The older helper notebook is:
 
 ```text
 notebooks/01_colab_training.ipynb
@@ -156,4 +162,3 @@ The machine learning components are intentionally explainable and suitable for a
 ## Important Ethical Note
 
 The project uses a public dataset only. It does not collect private customer information, does not use private Sri Lankan SME data, and does not attempt to identify real people or businesses.
-

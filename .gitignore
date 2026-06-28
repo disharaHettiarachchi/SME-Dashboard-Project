@@ -12,6 +12,7 @@ env/
 data/processed/*.csv
 data/processed/*.txt
 models/*.joblib
+models/*.csv
 
 tmp/
 output/
@@ -19,4 +20,3 @@ output/
 .ipynb_checkpoints/
 .DS_Store
 Thumbs.db
-
