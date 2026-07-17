@@ -1,164 +1,141 @@
-# BI-Based Decision Support Dashboard for SME-Style Retail Analysis
+# SME Business Intelligence Decision Support Dashboard
 
-This is a final year research project prototype for:
+Final year research project implementation for:
 
 **Design and Development of a Business Intelligence-Based Decision Support Dashboard for Strategic Decision-Making in Small and Medium Enterprises**
 
-The project uses the public **UCI Online Retail** dataset as a representative retail transaction dataset. It does not use or invent private Sri Lankan SME data.
+The system uses the public UCI Online Retail dataset as a representative retail transaction dataset. It does not use private Sri Lankan SME data.
 
-## Main Features
+This folder contains the Streamlit application only. The self-contained analytics and training notebook is kept separately at `../01_COLAB_ANALYTICS/BI_Dashboard_Final_Analytics_Colab.ipynb`; that notebook does not generate this application code.
 
-- Streamlit web application
-- Executive business KPI dashboard
-- Sales analytics by month, country, product, customer, and quantity
-- Customer analytics using RFM analysis
-- Customer segmentation using K-Means clustering
-- Product analytics and slow-moving product detection
-- Decision-support insight cards and alerts
-- Monthly revenue or quantity forecasting
-- Colab-friendly training/preprocessing workflow
-- GitHub and Streamlit Cloud deployment-ready structure
+## Final System Features
 
-## Project Structure
+- Executive KPIs: revenue, orders, customers, average order value, quantity, products, and markets
+- Date and country filters shared across dashboard modules
+- Sales, country, customer, product, and cancellation analytics
+- RFM customer analysis and K-Means segmentation
+- Cluster-count comparison using silhouette score and inertia
+- Merchandise-aware product rankings that exclude postage and adjustment codes by default
+- Product action matrix and slow-moving product recommendations
+- Transparent rule-based decision-support alerts
+- Revenue and quantity forecasting with three model comparisons
+- Chronological holdout evaluation using MAE, RMSE, and MAPE
+- Partial-month detection so incomplete December 2011 data is excluded from model evaluation and decline alerts
+- Filtered transaction and decision-insight downloads
+- Automated tests and reproducible research-result exports
+
+## Repository Structure
 
 ```text
 app.py
 pages/
 src/
-  data_loader.py
-  preprocessing.py
-  kpi_calculator.py
-  segmentation.py
-  forecasting.py
-  visualizations.py
-  decision_support.py
-  streamlit_helpers.py
-  utils.py
-data/
-  raw/
-    Online Retail.xlsx
-  processed/
-models/
-notebooks/
-  01_colab_training.ipynb
-assets/
-docs/
 scripts/
-  prepare_data.py
-  train_models.py
+tests/
+data/processed/
+models/
+.streamlit/config.toml
+.github/workflows/tests.yml
 requirements.txt
 README.md
-.gitignore
 ```
 
-## Dataset
+## Local Run
 
-Place the dataset here:
-
-```text
-data/raw/Online Retail.xlsx
-```
-
-The app also checks the project root for `Online Retail.xlsx`, but `data/raw/` is the recommended path for GitHub and Streamlit Cloud.
-
-The dataset includes these fields:
-
-- `InvoiceNo`
-- `StockCode`
-- `Description`
-- `Quantity`
-- `InvoiceDate`
-- `UnitPrice`
-- `CustomerID`
-- `Country`
-
-## Local Setup
-
-Create and activate a virtual environment if desired:
-
-```bash
+```powershell
 python -m venv .venv
 .venv\Scripts\activate
-```
-
-Install dependencies:
-
-```bash
 pip install -r requirements.txt
-```
-
-Prepare cleaned data:
-
-```bash
-python scripts/prepare_data.py
-```
-
-Train segmentation and forecasting artifacts:
-
-```bash
-python scripts/train_models.py
-```
-
-Run the Streamlit app:
-
-```bash
 streamlit run app.py
 ```
 
-## Google Colab Workflow
+Open `http://localhost:8501` in a browser.
 
-For a self-contained Colab workflow with the full code inside the notebook, use:
+The final repository includes `data/processed/prepared_online_retail.csv.gz`, a compressed deployment bundle. The large cleaned CSV and raw Excel file are not required when running the deployed dashboard.
 
-```text
-notebooks/BI_Dashboard_Full_Project_Colab.ipynb
+## Rebuild Data and Models
+
+Place `Online Retail.xlsx` in `data/raw/`, then run:
+
+```powershell
+python scripts/prepare_data.py
+python scripts/train_models.py
+python scripts/export_research_results.py
+python scripts/benchmark_pipeline.py
 ```
 
-The older helper notebook is:
+Generated research evidence is written to `output/research_results/`.
 
-```text
-notebooks/01_colab_training.ipynb
+## Automated Tests
+
+```powershell
+python -m unittest discover -s tests -v
 ```
 
-Recommended Colab flow:
+The tests use synthetic transactions, so CI does not need the full UCI dataset.
 
-1. Clone your GitHub repository or upload the project files.
-2. Ensure `Online Retail.xlsx` is inside `data/raw/`.
-3. Run `pip install -r requirements.txt`.
-4. Run `python scripts/prepare_data.py`.
-5. Run `python scripts/train_models.py`.
-6. Download generated files from `data/processed/` and `models/` if needed.
+## Google Colab
 
-The Streamlit app can still run without pre-trained artifacts because it can compute analytics from the raw dataset.
+Open `../01_COLAB_ANALYTICS/BI_Dashboard_Final_Analytics_Colab.ipynb`. It contains the complete analytical workflow in one notebook and can:
 
-## Streamlit Cloud Deployment
+1. Install dependencies.
+2. Upload `Online Retail.xlsx`.
+3. Prepare the compressed deployment dataset.
+4. Train segmentation and forecasting artefacts.
+5. Compare cluster counts and forecast models.
+6. Run eight final validation checks.
+7. Export dissertation evidence and a results ZIP.
 
-1. Push this repository to GitHub.
-2. Make sure `data/raw/Online Retail.xlsx` is included in the repository.
-3. Go to [Streamlit Cloud](https://streamlit.io/cloud).
-4. Create a new app from your GitHub repository.
-5. Set the main file path to:
+It deliberately does not create `app.py` or any Streamlit source file. Copy its generated `data/processed` and `models` outputs into this application folder after the final Colab run.
 
-```text
-app.py
-```
+## GitHub Upload
 
-6. Streamlit Cloud will install packages from `requirements.txt`.
-7. Launch the app.
+Commit this application source, the small model artefacts, and `data/processed/prepared_online_retail.csv.gz`. Keep the Colab notebook in the academic submission folder or repository documentation area rather than making the deployed application depend on it.
 
-## Viva Explanation Notes
+Do not commit:
 
-This system follows a simple BI pipeline:
+- `data/processed/cleaned_online_retail.csv` because it is approximately 81 MB.
+- `Online Retail.xlsx` because the compressed prepared bundle is sufficient for deployment.
+- `.venv/`, temporary files, or local secrets.
 
-1. Load public retail transaction data.
-2. Clean invalid, cancelled, zero-price, and negative-quantity records.
-3. Calculate KPIs such as revenue, orders, customers, AOV, and product sales.
-4. Visualize sales, product, country, and customer patterns.
-5. Apply RFM analysis and K-Means clustering for customer segmentation.
-6. Compare simple forecasting models using monthly revenue or quantity.
-7. Translate analytics into decision-support recommendations.
+The included GitHub Actions workflow runs the automated analytics tests on pushes and pull requests.
 
-The machine learning components are intentionally explainable and suitable for a final year individual project.
+## Streamlit Community Cloud
 
-## Important Ethical Note
+1. Push the final project files to a GitHub repository.
+2. Confirm `data/processed/prepared_online_retail.csv.gz` is present.
+3. Sign in to Streamlit Community Cloud.
+4. Create an app from the GitHub repository.
+5. Set the main file path to `app.py`.
+6. Deploy and wait for the health check to pass.
+7. Record the deployment URL and capture final screenshots for the dissertation placeholders.
 
-The project uses a public dataset only. It does not collect private customer information, does not use private Sri Lankan SME data, and does not attempt to identify real people or businesses.
+No API key, paid service, or secrets file is required.
+
+## Verified Full-Dataset Results
+
+- Raw rows: 541,909
+- Valid positive-sales rows: 530,104
+- Revenue: GBP 10,666,684.54
+- Orders: 19,960
+- Customers: 4,338
+- Complete calendar months used for forecasting: 12
+- Partial months excluded: 1
+- Recommended customer clusters: 3
+- Recommended-cluster silhouette score: 0.416
+- Automated analytics tests: 8 passed
+
+Forecast errors are deliberately reported rather than hidden. The simple models are baseline decision-support tools, and the short 12-month complete history limits predictive reliability.
+
+## Ethical and Analytical Boundaries
+
+- Customer IDs are treated as anonymous analytical keys.
+- No private SME or Sri Lankan customer data is used.
+- The dataset represents a UK-based online retailer and should not be claimed as statistically representative of all SMEs.
+- The annualized customer value field is a behavioural indicator, not a probabilistic lifetime-value estimate.
+- Dashboard recommendations are transparent rules and require managerial judgement.
+- Forecasts are baseline estimates and should not be treated as guaranteed future performance.
+
+## Dataset Citation
+
+D. Chen, "Online Retail," UCI Machine Learning Repository, 2015, doi: 10.24432/C5BW33.
